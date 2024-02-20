@@ -30,10 +30,15 @@ const renderSpinner = function (parentEl) {
 
 const showRecipe = async function () {
   try {
+    const id = window.location.hash.slice(1);
+    console.log(id);
+
+    if (!id) return;
+
     // 1) Loading Recipe
     renderSpinner(recipeContainer);
     const res = await fetch(
-      'https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bcc40'
+      `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`
       // 'https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886'
     );
     const data = await res.json();
@@ -156,4 +161,20 @@ const showRecipe = async function () {
 };
 
 showRecipe();
-console.log(icons);
+
+// window.addEventListener('hashchange', showRecipe);
+// window.addEventListener('load', showRecipe);
+['hash', 'load'].forEach(ev => window.addEventListener(ev, showRecipe));
+
+// Algorithm to doing work like ceil and floor methods in JavaScript Manually
+// let value = 51.3;
+// let final_value = value.toString().split('.');
+// let secondValue = final_value[1].split();
+// if (secondValue == 5 || secondValue > 5) {
+//   final_value[0] = +final_value[0] + 1;
+//   value = final_value[0];
+// } else {
+//   final_value[0] = +final_value[0];
+//   value = final_value[0];
+// }
+// console.log(value);
