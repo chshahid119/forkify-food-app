@@ -3,5 +3,5 @@
     "minimap.background": "#00000000",
     "scrollbar.shadow": "#00000000"
   },
-  "git.ignoreLimitWarning": true
+  "git.ignoreLimitWarning": true,
 }
