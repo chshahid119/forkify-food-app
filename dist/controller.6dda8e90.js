@@ -420,77 +420,13 @@ const controlRecipes = async function () {
     // 2) Rendering Recipe
     _recipeView.default.render(model.state.recipe);
   } catch (err) {
-    alert(err);
+    _recipeView.default.renderError();
   }
 };
-['hashchange', 'load'].forEach(ev => window.addEventListener(ev, controlRecipes));
-
-// -----------------------------------------------------------
-// Again Repeating from start
-// // API LINK
-// // https://forkify-api.herokuapp.com/v2
-
-// import 'core-js/stable';
-// import 'regenerator-runtime/runtime';
-// import { async } from 'regenerator-runtime';
-// import * as model from './model.js';
-// import recipeView from './views/recipeView.js';
-// import searchView from './views/searchView.js';
-
-// const recipeContainer = document.querySelector('.recipe');
-
-// const controlRecipes = async function () {
-//   try {
-//     const id = window.location.hash.slice(1);
-
-//     if (!id) return;
-
-//     // 1) Loading Recipe
-//     recipeView.renderSpinner();
-
-//     await model.loadRecipe(id);
-
-//     // 2) Rendering Recipe
-//     recipeView.render(model.state.recipe);
-//   } catch (err) {
-//     // console.error();
-//     recipeView.renderError();
-//   }
-// };
-
-// const controlSearchResults = async function () {
-//   try {
-//     const query = searchView.getQuery();
-//     if (!query) return;
-
-//     await model.loadSearchResults('pizza');
-//     console.log(model.state.search.results);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
-
-// controlSearchResults();
-
-// const init = function () {
-//   recipeView.addHandleRender(controlRecipes);
-//   // searchView.addHandlerSearch(controlSearchResults);
-// };
-
-// init();
-
-// // Algorithm to doing work like ceil and floor methods in JavaScript Manually
-// // let value = 51.3;
-// // let final_value = value.toString().split('.');
-// // let secondValue = final_value[1].split();
-// // if (secondValue == 5 || secondValue > 5) {
-// //   final_value[0] = +final_value[0] + 1;
-// //   value = final_value[0];
-// // } else {
-// //   final_value[0] = +final_value[0];
-// //   value = final_value[0];
-// // }
-// // console.log(value);
+const init = function () {
+  _recipeView.default.addHanlerRender(controlRecipes);
+};
+init();
 },{"core-js/modules/web.immediate.js":"140df4f8e97a45c53c66fead1f5a9e92","./model":"aabf248f40f7693ef84a0cb99f385d1f","./views/recipeView":"bcae1aced0301b01ccacb3e6f7dfede8"}],"140df4f8e97a45c53c66fead1f5a9e92":[function(require,module,exports) {
 'use strict';
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
@@ -1885,67 +1821,10 @@ const loadRecipe = async function (id) {
     // console.log(state.recipe);
   } catch (err) {
     // Temp Error handling
-    console.error(`${err} 🔥 🔥`);
+    // console.error(`${err} 🔥 🔥`);
+    throw err;
   }
 };
-
-//-------------------------------------------------------------------------
-// import { async } from 'regenerator-runtime';
-// import { API_URL } from './config';
-// import { getJSON } from './helpers';
-
-// export const state = {
-//   recipe: {},
-//   search: {
-//     query: '',
-//     results: [],
-//   },
-// };
-
-// export const loadRecipe = async function (id) {
-//   try {
-//     const data = await getJSON(`${API_URL}${id}`);
-
-//     if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-
-//     const { recipe } = data.data;
-
-//     state.recipe = {
-//       id: recipe.id,
-//       title: recipe.title,
-//       publisher: recipe.publisher,
-//       sourceUrl: recipe.sourcerl,
-//       image: recipe.image_url,
-//       servings: recipe.servings,
-//       cookingTime: recipe.cooking_time,
-//       ingredeients: recipe.ingredients,
-//     };
-
-//     console.log(state.recipe);
-//   } catch (err) {
-//     throw err;
-//   }
-// };
-
-// export const loadSearchResults = async function (query) {
-//   try {
-//     state.search.query = query;
-//     const data = await getJSON(`${API_URL}?search=${query}`);
-//     console.log(data);
-
-//     state.search.results = data.data.recipes.map(rec => {
-//       return {
-//         id: rec.id,
-//         title: rec.title,
-//         publihser: rec.publisher,
-//         image: rec.image_url,
-//       };
-//     });
-//   } catch (err) {
-//     console.error(`${err} 🔥 🔥`);
-//     throw err;
-//   }
-// };
 exports.loadRecipe = loadRecipe;
 },{"regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16","./config":"09212d541c5c40ff2bd93475a904f8de","./helpers":"0e8dcd8a4e1c61cf18f78e1c2563655d"}],"e155e0d3930b156f86c48e8d05522b16":[function(require,module,exports) {
 /**
@@ -2748,29 +2627,6 @@ const getJSON = async function (url) {
     throw err;
   }
 };
-
-//--------------------------------------------------------------
-// // import { async } from 'regenerator-runtime';
-// import { TIMEOUT_SEC } from './config';
-
-// const timeout = function (s) {
-//   return new Promise(function (_, reject) {
-//     setTimeout(function () {
-//       reject(new Error(`Request took too long! Timeout after ${s} second`));
-//     }, s * 1000);
-//   });
-// };
-
-// export const getJSON = async function (url) {
-//   try {
-//     const fetchPro = fetch(url);
-//     const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
-//     const data = await res.json();
-//   } catch (err) {
-//     // console.error(err);
-//   }
-//   if (!res.ok) throw new Error();
-// };
 exports.getJSON = getJSON;
 },{"./config.js":"09212d541c5c40ff2bd93475a904f8de","regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16"}],"bcae1aced0301b01ccacb3e6f7dfede8":[function(require,module,exports) {
 "use strict";
@@ -2789,16 +2645,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 class RecipeView {
   #parentElement = document.querySelector('.recipe');
   #data;
+  #errorMessage = 'We could not find that recipe. Please try another one!';
+  #message = '';
+
+  //RENDER FUNCTION TO RENDER WHOLE DATA ONTO UI
   render(data) {
     this.#data = data;
     const markup = this.#generateMarkup();
     this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   }
+
+  // CLEAR PREVIOUS HTML FUNCTION
   #clear() {
     this.#parentElement.innerHTML = '';
   }
-  renderSpinner = function () {
+
+  // RENDER SPINNER FUNCTION
+  renderSpinner() {
     const markup = ` 
     <div class="spinner">
     <svg>
@@ -2806,9 +2670,44 @@ class RecipeView {
     </svg>
   </div>
     `;
-    this.#parentElement.innerHTML = '';
+    this.#clear();
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
-  };
+  }
+
+  // RENDER ERROR FUNCTION
+  renderError(message = this.#errorMessage) {
+    const markup = `<div class="error">
+    <div>
+      <svg>
+        <use href="${_icons.default}#icon-alert-triangle"></use>
+      </svg>
+    </div>
+    <p>${message}</p>
+  </div>`;
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+
+  // RENDER SUCCESS MESSAGE FUNCTION
+  renderMessage(message = this.#message) {
+    const markup = `<div class="message">
+    <div>
+      <svg>
+        <use href="${_icons.default}#icon-smile"></use>
+      </svg>
+    </div>
+    <p>${message}</p>
+  </div>`;
+    this.#clear();
+    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+
+  // EVENT HANDLER FOR ALL EVENTS OF RECIPEVIEW.JS
+  addHanlerRender(handler) {
+    ['hashchange', 'load'].forEach(ev => window.addEventListener(ev, handler));
+  }
+
+  // GENERATE MARKUP FUNCTION
   #generateMarkup() {
     return `
     <figure class="recipe__fig">
@@ -2902,163 +2801,7 @@ class RecipeView {
  </li>`;
   }
 }
-var _default = exports.default = new RecipeView(); //---------------------------------------------------
-// // import icons from '../img/icons.svg'; // parcel 1
-// import icons from 'url:../../img/icons.svg'; // Parcel 2
-// import { Fraction } from 'fractional';
-// class RecipeView {
-//   #parentElement = document.querySelector('.recipe');
-//   #data;
-//   #errorMessage = 'We Could not find that this.#data. Please try another one!';
-//   #message = '';
-//   render(data) {
-//     this.#data = data;
-//     const markup = this.#generateMarkup();
-//     this.#clear();
-//     this.#data.insertAdjacentHTML('afterbegin', markup);
-//   }
-//   #clear() {
-//     this.#parentElement.innerHTML = '';
-//   }
-//   #renderSpinner() {
-//     const markup = `
-//         <div class="spinner">
-//         <svg>
-//         <use href="${icons}#icon-loader"></use>
-//         </svg>
-//         </div>`;
-//     this.#clear();
-//     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
-//   }
-//   renderError(message = this.#errorMessage) {
-//     const markup = `
-//         <div class="error">
-//             <div>
-//               <svg>
-//                 <use href="${icons}#icon-alert-triangle"></use>
-//               </svg>
-//             </div>
-//             <p>${message}</p>
-//           </div>
-//         `;
-//     this.#clear();
-//     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
-//   }
-//   renderMessage(message = this.#message) {
-//     const markup = `
-//         <div class="message">
-//             <div>
-//               <svg>
-//                 <use href="${icons}#icon-smile"></use>
-//               </svg>
-//             </div>
-//             <p>${message}</p>
-//           </div>
-//         `;
-//     this.#clear();
-//     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
-//   }
-//   addHandleRender(handler) {
-//     // window.addEventListener('hashchange', showRecipe);
-//     // window.addEventListener('load', showRecipe);
-//     ['hash', 'load'].forEach(ev => window.addEventListener(ev, handler));
-//   }
-//   #generateMarkup() {
-//     return `<figure class="recipe__fig">
-//         <img src="${this.#data.image}" alt="${
-//       this.#data.title
-//     }" class="recipe__img" />
-//         <h1 class="recipe__title">
-//           <span>${this.#data.title}</span>
-//         </h1>
-//       </figure>
-//       <div class="recipe__details">
-//         <div class="recipe__info">
-//           <svg class="recipe__info-icon">
-//             <use href="${icons}#icon-clock"></use>
-//           </svg>
-//           <span class="recipe__info-data recipe__info-data--minutes">${
-//             this.#data.cookingTime
-//           }</span>
-//           <span class="recipe__info-text">minutes</span>
-//         </div>
-//         <div class="recipe__info">
-//           <svg class="recipe__info-icon">
-//             <use href="${icons}#icon-users"></use>
-//           </svg>
-//           <span class="recipe__info-data recipe__info-data--people">${
-//             this.#data.servings
-//           }</span>
-//           <span class="recipe__info-text">servings</span>
-//           <div class="recipe__info-buttons">
-//             <button class="btn--tiny btn--increase-servings">
-//               <svg>
-//                 <use href="${icons}#icon-minus-circle"></use>
-//               </svg>
-//             </button>
-//             <button class="btn--tiny btn--increase-servings">
-//               <svg>
-//                 <use href="${icons}#icon-plus-circle"></use>
-//               </svg>
-//             </button>
-//           </div>
-//         </div>
-//         <div class="recipe__user-generated">
-//           <svg>
-//             <use href="${icons}#icon-user"></use>
-//           </svg>
-//         </div>
-//         <button class="btn--round">
-//           <svg class="">
-//             <use href="${icons}#icon-bookmark-fill"></use>
-//           </svg>
-//         </button>
-//       </div>
-//       <div class="recipe__ingredients">
-//         <h2 class="heading--2">Recipe ingredients</h2>
-//         <ul class="recipe__ingredient-list">
-//           ${this.#data.ingredeients
-//             .map(this.#generateMarkupIngredient)
-//             .join('')}
-//         </ul>
-//       </div>
-//       <div class="recipe__directions">
-//         <h2 class="heading--2">How to cook it</h2>
-//         <p class="recipe__directions-text">
-//           This recipe was carefully designed and tested by
-//           <span class="recipe__publisher">${
-//             this.#data.publisher
-//           }</span>. Please check out
-//           directions at their website.
-//         </p>
-//         <a
-//           class="btn--small recipe__btn"
-//           href="${this.#data.sourceUrl}"
-//           target="_blank"
-//         >
-//           <span>Directions</span>
-//           <svg class="search__icon">
-//             <use href="${icons}#icon-arrow-right"></use>
-//           </svg>
-//         </a>
-//       </div>`;
-//   }
-//   #generateMarkupIngredient(ing) {
-//     return `<li class="recipe__ingredient">
-//           <svg class="recipe__icon">
-//             <use href="${icons}#icon-check"></use>
-//           </svg>
-//           <div class="recipe__quantity">${
-//             ing.quantity ? new Fraction(ing.quantity).toString() : ''
-//           }</div>
-//           <div class="recipe__description">
-//             <span class="recipe__unit">${ing.unit}</span>
-//             ${ing.description}
-//           </div>
-//         </li>`;
-//   }
-// }
-// export default new RecipeView();
+var _default = exports.default = new RecipeView();
 },{"url:../../img/icons.svg":"24eb88617ecaf4d5e0a7f44d6cab1f80","fractional":"ddbc156a7c16e105c8df04e9fdec967d"}],"24eb88617ecaf4d5e0a7f44d6cab1f80":[function(require,module,exports) {
 module.exports = require('./bundle-url').getBundleURL() + require('./relative-path')("91f79ad3164735a7", "8baedd7de14a33bf");
 },{"./bundle-url":"2146da1905b95151ed14d455c784e7b7","./relative-path":"1b9943ef25c7bbdf0dd1b9fa91880a6c"}],"2146da1905b95151ed14d455c784e7b7":[function(require,module,exports) {
