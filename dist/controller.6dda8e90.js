@@ -391,17 +391,13 @@ module.exports.resolve = resolve;
 require("core-js/modules/web.immediate.js");
 var model = _interopRequireWildcard(require("./model"));
 var _recipeView = _interopRequireDefault(require("./views/recipeView"));
+var _searchView = _interopRequireDefault(require("./views/searchView"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 // ALL  IMPORTS
 
 const recipeContainer = document.querySelector('.recipe');
-
-// https://forkify-api.herokuapp.com/v2
-
-///////////////////////////////////////
-
 const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1);
@@ -423,11 +419,29 @@ const controlRecipes = async function () {
     _recipeView.default.renderError();
   }
 };
+const controlSearchResults = async function () {
+  try {
+    // 1) Get search Results
+    const query = _searchView.default.getQuery();
+    //GUARD CLASS
+    if (!query) return;
+
+    // 2) Load Search Results
+    await model.loadSearchResults(query);
+
+    // 3) Render Results
+    console.log(model.state.search.results);
+  } catch (err) {
+    console.log(err);
+  }
+};
+controlSearchResults();
 const init = function () {
   _recipeView.default.addHanlerRender(controlRecipes);
+  _searchView.default.addHandlerSearch(controlSearchResults);
 };
 init();
-},{"core-js/modules/web.immediate.js":"140df4f8e97a45c53c66fead1f5a9e92","./model":"aabf248f40f7693ef84a0cb99f385d1f","./views/recipeView":"bcae1aced0301b01ccacb3e6f7dfede8"}],"140df4f8e97a45c53c66fead1f5a9e92":[function(require,module,exports) {
+},{"core-js/modules/web.immediate.js":"140df4f8e97a45c53c66fead1f5a9e92","./model":"aabf248f40f7693ef84a0cb99f385d1f","./views/recipeView":"bcae1aced0301b01ccacb3e6f7dfede8","./views/searchView":"c5d792f7cac03ef65de30cc0fbb2cae7"}],"140df4f8e97a45c53c66fead1f5a9e92":[function(require,module,exports) {
 'use strict';
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
 require('../modules/web.clear-immediate');
@@ -1793,18 +1807,22 @@ module.exports = typeof Bun == 'function' && Bun && typeof Bun.version == 'strin
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.state = exports.loadRecipe = void 0;
+exports.state = exports.loadSearchResults = exports.loadRecipe = void 0;
 var _regeneratorRuntime = require("regenerator-runtime");
 var _config = require("./config");
 var _helpers = require("./helpers");
 // ALL IMPORTS HERE
 
 const state = exports.state = {
-  recipe: {}
+  recipe: {},
+  search: {
+    query: '',
+    results: []
+  }
 };
 const loadRecipe = async function (id) {
   try {
-    const data = await (0, _helpers.getJSON)(`${_config.API_URL}/${id}`);
+    const data = await (0, _helpers.getJSON)(`${_config.API_URL}${id}`);
     const {
       recipe
     } = data.data;
@@ -1821,11 +1839,31 @@ const loadRecipe = async function (id) {
     // console.log(state.recipe);
   } catch (err) {
     // Temp Error handling
-    // console.error(`${err} 🔥 🔥`);
+    console.error(`${err} 🔥 🔥`);
     throw err;
   }
 };
 exports.loadRecipe = loadRecipe;
+const loadSearchResults = async function (query) {
+  try {
+    state.search.query = query;
+    const data = await (0, _helpers.getJSON)(`${_config.API_URL}?search=${query}`);
+    console.log(data);
+    state.search.results = data.data.recipes.map(rec => {
+      return {
+        id: rec.id,
+        title: rec.title,
+        publisher: rec.publisher,
+        sourceUrl: rec.source_url,
+        image: rec.image_url
+      };
+    });
+  } catch (err) {
+    console.error(`${err} 🔥 🔥`);
+    throw err;
+  }
+};
+exports.loadSearchResults = loadSearchResults;
 },{"regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16","./config":"09212d541c5c40ff2bd93475a904f8de","./helpers":"0e8dcd8a4e1c61cf18f78e1c2563655d"}],"e155e0d3930b156f86c48e8d05522b16":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -2596,8 +2634,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.TIMEOUT_SEC = exports.API_URL = void 0;
-const API_URL = exports.API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes';
+const API_URL = exports.API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
 const TIMEOUT_SEC = exports.TIMEOUT_SEC = 10;
+
+// Forkify Api Link 🔗
+// https://forkify-api.herokuapp.com/v2
 },{}],"0e8dcd8a4e1c61cf18f78e1c2563655d":[function(require,module,exports) {
 "use strict";
 
@@ -3284,6 +3325,31 @@ Fraction.primeFactors = function(n)
 
 module.exports.Fraction = Fraction
 
+},{}],"c5d792f7cac03ef65de30cc0fbb2cae7":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+class SearchView {
+  #parentEl = document.querySelector('.search');
+  getQuery() {
+    const query = this.#parentEl.querySelector('.search__field').value;
+    this.clearInput();
+    return query;
+  }
+  clearInput() {
+    this.#parentEl.querySelector('.search__field').value = '';
+  }
+  addHandlerSearch(handler) {
+    this.#parentEl.addEventListener('submit', function (e) {
+      e.preventDefault();
+      handler();
+    });
+  }
+}
+var _default = exports.default = new SearchView();
 },{}]},{},["61b05d9e34c94ab8c664d08def5e932a","931201f3129591f1851ef35ec82d62f7","175e469a7ea7db1c8c0744d04372621f"], null)
 
 //# sourceMappingURL=controller.6dda8e90.js.map
