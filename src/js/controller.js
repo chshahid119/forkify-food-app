@@ -1,30 +1,21 @@
-import * as model from './model.js';
+// API LINK 
+// https://forkify-api.herokuapp.com/v2
+
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+import {async} from 'regenerator-runtime';
+import * as model from './model.js';
 import recipeView from './views/recipeView.js';
+import searchView from './views/searchView.js';
+
 
 const recipeContainer = document.querySelector('.recipe');
 
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
-
-// https://forkify-api.herokuapp.com/v2
-
-///////////////////////////////////////
-
-
-
 const controlRecipes = async function () {
   try {
-    // const id = window.location.hash.slice(1);
-    const id ='5ed6604591c37cdc054bc886';
-    console.log(id);
+    const id = window.location.hash.slice(1);
+  
 
     if (!id) return;
 
@@ -37,17 +28,34 @@ const controlRecipes = async function () {
     recipeView.render(model.state.recipe);
   
   } catch (err) {
-    alert(err);
+    // console.error();
+    recipeView.renderError();
   }
 };
 
-showRecipe();
 
-// window.addEventListener('hashchange', showRecipe);
-// window.addEventListener('load', showRecipe);
-['hash', 'load'].forEach(ev => window.addEventListener(ev, controlRecipes));
+const controlSearchResults =async function(){
+  try{
+      const query = searchView.getQuery();
+      if(!query) return;
+    
+     await model.loadSearchResults(query);
+     console.log(model.state.search.results);
+  }
+  catch(err){
+    console.log(err);
+  }
+}
 
-// Algorithm to doing work like ceil and floor methods in JavaScript Manually
+
+const init=function(){
+  recipeView.addHandleRender(controlRecipes);
+  searchView.addHandlerSearch(controlSearchResults);
+}
+
+init();
+
+// Algorithm to doing work like ceil and floor methods in JavaScript Manually  
 // let value = 51.3;
 // let final_value = value.toString().split('.');
 // let secondValue = final_value[1].split();
