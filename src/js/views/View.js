@@ -9,7 +9,7 @@ export default class View {
    * @param {boolean} [render=true] If false, create markup string instead of rendering to the DOM
    * @returns {undefined | string} A markup string is returned if render=false
    * @this {Object} View instance
-   * @author Shahid Chaudhary
+   * @author Jonas Schmedtmann
    * @todo Finish implementation
    */
   render(data, render = true) {
