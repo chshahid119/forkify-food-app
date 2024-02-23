@@ -11,7 +11,7 @@
     "start": "parcel index.html",
     "build": "parcel build index.html --dist-dir ./dist"
   },
-  "author": "Jonas Schedtmann",
+  "author": "Shahid Chaudhary",
   "license": "ISC",
   "devDependencies": {
     "@parcel/transformer-sass": "^2.2.1",
