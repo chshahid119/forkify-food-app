@@ -3,6 +3,16 @@ import icons from 'url:../../img/icons.svg'; // Parcel 2
 
 export default class View {
   _data;
+  /**
+   *Render the received object to the DOM
+   * @param {Object | Object[]} data The data to be rendered (e.g. recipe)
+   * @param {boolean} [render=true] If false, create markup string instead of rendering to the DOM
+   * @returns {undefined | string} A markup string is returned iif render=false
+   * @this {Object} View instance
+   * @author Shahid
+   * @todo Finish implementation
+   */
+
   //RENDER FUNCTION TO RENDER WHOLE DATA ONTO UI
   render(data, render = true) {
     this._data = data;
